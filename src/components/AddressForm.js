@@ -1,5 +1,8 @@
 import React, { useState } from "react"
 
+import _ from 'lodash'
+import ErrorList from './ErrorList'
+
 const AddressForm = props => {
   const [addressRecord, setAddressRecord] = useState({
     firstName: "",
@@ -11,6 +14,8 @@ const AddressForm = props => {
     phoneNumber: "",
     email: "",
   })
+
+  const [errors, setErrors] = useState({})
 
   const handleInputChange = (event) => {
     setAddressRecord({
@@ -31,17 +36,37 @@ const AddressForm = props => {
       phoneNumber: "",
       email: "",
     })
+    setErrors({})
+  }
+
+  const validForSubmission = () => {
+    let submitErrors = {}
+    const requiredFields = ["firstName", "lastName", "address", "city", "state", "zipCode", "phoneNumber", "email"]
+    requiredFields.forEach((reqField) => {
+      if (addressRecord[reqField].trim() === "") {
+        submitErrors = {
+          ...submitErrors,
+          [reqField]: "cannot be blank"
+        }
+      }
+    })
+
+    setErrors(submitErrors)
+    return _.isEmpty(submitErrors)
   }
 
   const onSubmitHandler = (event) => {
     event.preventDefault()
-    props.onAddressSubmitted(addressRecord)
-    clearForm()
+    if (validForSubmission()) {
+      props.onAddressSubmitted(addressRecord)
+      clearForm()
+    }
   }
 
   return (
     <form className="callout" id="shipping-address-form" onSubmit={onSubmitHandler}>
       <h1>Shipping Address</h1>
+      <ErrorList errors={errors} />
       <div>
         <label htmlFor="firstName">First Name:</label>
         <input
