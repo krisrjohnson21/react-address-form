@@ -19,11 +19,6 @@ const AddressForm = props => {
     })
   }
 
-  const onSubmitHandler = (event) => {
-    event.preventDefault()
-    props.onAddressSubmitted(addressRecord)
-  }
-
   const clearForm = (event) => {
     event.preventDefault()
     setAddressRecord({
@@ -36,6 +31,12 @@ const AddressForm = props => {
       phoneNumber: "",
       email: "",
     })
+  }
+
+  const onSubmitHandler = (event) => {
+    event.preventDefault()
+    props.onAddressSubmitted(addressRecord)
+    clearForm()
   }
 
   return (
